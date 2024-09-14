@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "raw-sorter"
+version = "0.1.0"
+description = "Utility for sorting selected RAW, NEF and JPG files"
+authors = ["Anna Green <annagreen.photo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pytest-cov = "^5.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
