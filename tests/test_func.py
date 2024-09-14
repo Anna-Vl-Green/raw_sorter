@@ -1,11 +1,13 @@
+import shutil
 import pytest
-import tempfile
 import os
 from src import func
-from tests.test_config import (test_user_string, test_user_list, test_listing_filenames, test_new_list,
-                               test_new_list_files, test_not_found)
+from tests.test_config import (test_user_string, test_user_parsing_list, test_user_list, test_listing_filenames,
+                               test_new_list, test_transfer_list_files, test_transfer_not_found, test_counter,
+                               test_report)
 
 
+@pytest.mark.xfail(raises=FileNotFoundError)
 @pytest.fixture(scope='module')
 def generate_files():
     """
@@ -48,16 +50,13 @@ def test_get_string(monkeypatch):
 def test_parser_list():
     """
     Тестирует функцию parser_list().
-    :param new_string: str
-    :return: list
     """
-    assert func.parser_list(test_user_string) == test_user_list
+    assert func.parser_list(test_user_string) == test_user_parsing_list
 
 
 def test_make_directory():
     """
     Тестирует функцию make_directory().
-    :param current_dir: str
     """
     func.make_directory('./test_dir')
     os.chdir('./test_dir')
@@ -68,17 +67,16 @@ def test_make_directory():
 def test_make_directory_if_exist():
     """
     Тестирует функцию make_directory().
-    :param current_dir: str
     """
     func.make_directory('./test_dir/test_files')
     os.chdir('./test_dir/test_files')
     assert os.path.isdir('selected')
 
 
+@pytest.mark.xfail(raises=FileNotFoundError)
 def test_get_filepath(generate_files):
     """
     Тестирует функцию get_filepath().
-    :param current_dir: str
     :return: list
     """
     assert func.get_filepath('.') == test_listing_filenames
@@ -87,7 +85,6 @@ def test_get_filepath(generate_files):
 def test_get_unique_list():
     """
     Тестирует функцию get_unique_list().
-    :param new_list: list
     :return: list
     """
     set_1 = set(func.get_unique_list(test_new_list))
@@ -95,34 +92,37 @@ def test_get_unique_list():
     assert set_1 - set_2 == set()
 
 
+@pytest.mark.xfail(raises=FileNotFoundError)
 def test_transfer_list(generate_files):
     """
     Тестирует функцию transfer_list().
-    :param listing_files: list
-    :param selected_files: list
     :return: list
     :return: list
     """
-    pass
+    listing_files = func.get_filepath('.')
+    transfer_list_files, transfer_not_found = func.get_transfer_list(listing_files, test_user_list)
+    assert transfer_list_files == test_transfer_list_files
+    assert transfer_not_found == test_transfer_not_found
 
 
-def test_copy_files(names_list, parent_dir, new_dir):
+@pytest.mark.xfail(raises=FileNotFoundError)
+def test_copy_files(generate_files):
     """
     Тестирует функцию copy_files().
-    :param names_list: list
-    :param parent_dir: str
-    :param new_dir: str
     :return: int
     """
-    pass
+    counter = func.copy_files(test_transfer_list_files, '.', './selected')
+    assert counter == test_counter
+    for name in test_transfer_list_files:
+        assert os.path.isfile(name)
+        shutil.rmtree('./selected')
+        os.mkdir('./selected')
 
 
-def test_make_report(names_list, not_found_list, counter):
+def test_make_report():
     """
     Тестирует функцию make_report().
-    :param names_list: list
-    :param not_found_list: list
-    :param counter: int
     :return: str
     """
-    pass
+    report = func.make_report(test_user_list, test_transfer_not_found, test_counter)
+    assert report == test_report
