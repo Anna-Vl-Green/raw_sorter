@@ -1,3 +1,4 @@
+import os
 from shutil import copy2
 from os import scandir, makedirs
 
@@ -37,10 +38,14 @@ def parser_list(new_string: str):
     name: str = ''
     selected_files: list = []
     for char in new_string:
-        if char.isalnum or char == '_':
-            name.join(char.lower())
+        if char.isalnum() or char == '_':
+            name += char.lower()
         else:
-            selected_files.append(name)
+            if name:
+                selected_files.append(name)
+                name = ''
+    if name:
+        selected_files.append(name)
     return selected_files
 
 
@@ -50,7 +55,7 @@ def make_directory(current_dir):
     :param current_dir: Путь к директории в формате строки.
     """
     current_dir += '/selected'
-    makedirs(current_dir, exist_ok=False)
+    makedirs(current_dir, exist_ok=True)
 
 
 def get_filepath(current_dir):
@@ -62,8 +67,10 @@ def get_filepath(current_dir):
     """
     listing_files: list = []
     for file in scandir(current_dir):
-        listing_files.append(file)
-    return listing_files
+        if file.is_file():
+            listing_files.append(file)
+    listing_filenames = [file.name for file in listing_files]
+    return listing_filenames
 
 
 def get_unique_list(new_list):
@@ -78,8 +85,8 @@ def get_unique_list(new_list):
 def transfer_list(listing_files, selected_files):
     """
     Функция формирует список выбранных и список отсутствующих файлов.
-    :param listing_files: Список файлов в рабочей директории.
-    :param selected_files: Список файлов, выбранных пользователем.
+    :param listing_files: list: Список файлов в рабочей директории.
+    :param selected_files: list: Список файлов, выбранных пользователем.
     :return: list: Список выбранных имён файлов с расширениями.
     :return: list: Список не найденных имён файлов с расширениями.
     """
