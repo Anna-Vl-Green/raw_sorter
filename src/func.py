@@ -82,7 +82,7 @@ def get_unique_list(new_list):
     return list(set(new_list))
 
 
-def get_transfer_list(listing_files, selected_files):
+def get_transfer_list(listing_files: list, selected_files: list):
     """
     Функция формирует список выбранных и список отсутствующих файлов.
     :param listing_files: list: Список файлов в рабочей директории.
@@ -95,7 +95,7 @@ def get_transfer_list(listing_files, selected_files):
     for name in selected_files:
         found = False
         for i, filename in enumerate(listing_files):
-            if name.lower() in filename.lower():
+            if name_comparer(name, filename):
                 transfer_list_files.append(filename)
                 del listing_files[i]
                 found = True
@@ -105,14 +105,29 @@ def get_transfer_list(listing_files, selected_files):
     return transfer_list_files, transfer_not_found
 
 
-def copy_files(transfer_list, parent_dir, new_dir):
+def name_comparer(searching_name: str, file_name: str):
+    """
+    Функция сравнивает имена входящих переменных без учёта расширения файла, указанного в имени file_name.
+    :param searching_name: str: Имя искомого файла
+    :param file_name: str: Имя файла вместе с расширением
+    :return:
+    """
+    part_name, _ = file_name.split('.')
+    for i in range(len(searching_name))[::-1]:
+        if searching_name[i].lower() != part_name[i].lower():
+            return False
+    return True
+
+
+def copy_files(transfer_list, parent_dir, new_dir_name='selected'):
     """
     Функция копирования файлов.
     :param transfer_list: Список файлов для копирования.
     :param parent_dir: str: Путь к рабочей директории в формате строки.
-    :param new_dir: str: Путь к директории, в которую нужно скопировать файлы.
+    :param new_dir_name: str: Путь к директории, в которую нужно скопировать файлы.
     :return: int: Количество скопированных файлов.
     """
+    new_dir = os.path.join(parent_dir, new_dir_name)
     counter = 0
     for filename in transfer_list:
         source = os.path.join(parent_dir, filename)
