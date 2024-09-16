@@ -13,8 +13,9 @@ test_transfer_not_found = ['dsc_120', 'dsc_121', '24']
 
 test_dir = r'.\test_dir'
 
-test_listing_filenames = ['DSC_100.txt', 'DSC_101.txt', 'DSC_102.txt', 'DSC_103.txt', 'DSC_104.txt', 'DSC_105.txt',
-                          'DSC_106.txt', 'DSC_107.txt', 'DSC_108.txt', 'DSC_109.txt']
+test_listing_filenames = ['DSC_100.txt', 'DSC_101.txt', 'DSC_1010.txt', 'DSC_1011.txt', 'DSC_1012.txt', 'DSC_1013.txt',
+                          'DSC_1014.txt', 'DSC_102.txt', 'DSC_103.txt', 'DSC_104.txt', 'DSC_105.txt', 'DSC_106.txt',
+                          'DSC_107.txt', 'DSC_108.txt', 'DSC_109.txt']
 
 test_new_list = ['dsc_100', 'dsc_100', 'dsc_100', 'dsc_101', 'dsc_102', 'dsc_103', 'dsc_104', 'dsc_105',
                  'dsc_106', 'dsc_107', 'dsc_108', 'dsc_108', 'dsc_108', 'dsc_109', 'dsc_109']

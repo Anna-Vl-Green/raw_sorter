@@ -65,11 +65,10 @@ def get_filepath(current_dir):
     :param current_dir: Путь к директории в формате строки.
     :return: list: Список файлов с расширениями.
     """
-    listing_files: list = []
+    listing_filenames: list = []
     for file in scandir(current_dir):
         if file.is_file():
-            listing_files.append(file)
-    listing_filenames = [file.name for file in listing_files]
+            listing_filenames.append(file.name)
     return listing_filenames
 
 
