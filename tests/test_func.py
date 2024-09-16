@@ -3,21 +3,27 @@ import pytest
 import os
 from src import func
 from tests.test_config import (test_user_string, test_user_parsing_list, test_user_list, test_listing_filenames,
-                               test_new_list, test_transfer_list_files, test_transfer_not_found, test_counter,
-                               test_report)
+                               test_new_list, test_transfer_list_files, test_transfer_not_found,
+                               test_searching_name_true, test_searching_name_false, test_file_name,
+                               test_counter, test_report)
+
+CURRENT_PATH = os.getcwd()
+TEST_DIR = r'.//tests//test_dir'
+NEW_DIR_NAME = 'selected'
 
 
-@pytest.mark.xfail(raises=FileNotFoundError)
+# @pytest.mark.xfail(raises=FileNotFoundError)
 @pytest.fixture(scope='module')
 def generate_files():
     """
     Создаёт набор файлов для тестирования.
     """
-    os.chdir('./test_dir/test_files')
-    for i in range(0, 10):
+    os.chdir(TEST_DIR)
+    for i in range(0, 15):
         filename = f'DSC_10{i}.txt'
         with open(filename, 'w') as f:
             f.write('')
+    os.chdir(CURRENT_PATH)
 
 
 def test_welcome():
@@ -58,28 +64,29 @@ def test_make_directory():
     """
     Тестирует функцию make_directory().
     """
-    func.make_directory('./test_dir')
-    os.chdir('./test_dir')
-    assert os.path.isdir('selected')
-    os.rmdir('selected')
+    func.make_directory(TEST_DIR)
+    os.chdir(TEST_DIR)
+    assert os.path.isdir(NEW_DIR_NAME)
+    os.chdir(CURRENT_PATH)
 
 
-def test_make_directory_if_exist():
+def test_make_directory_and_delete():
     """
     Тестирует функцию make_directory().
     """
-    func.make_directory('./test_dir/test_files')
-    os.chdir('./test_dir/test_files')
-    assert os.path.isdir('selected')
+    func.make_directory(TEST_DIR)
+    os.chdir(TEST_DIR)
+    assert os.path.isdir(NEW_DIR_NAME)
+    os.chdir(CURRENT_PATH)
 
 
-@pytest.mark.xfail(raises=FileNotFoundError)
+# @pytest.mark.xfail(raises=FileNotFoundError)
 def test_get_filepath(generate_files):
     """
     Тестирует функцию get_filepath().
     :return: list
     """
-    assert func.get_filepath('.') == test_listing_filenames
+    assert func.get_filepath(TEST_DIR) == test_listing_filenames
 
 
 def test_get_unique_list():
@@ -92,31 +99,47 @@ def test_get_unique_list():
     assert set_1 - set_2 == set()
 
 
-@pytest.mark.xfail(raises=FileNotFoundError)
+# @pytest.mark.xfail(raises=FileNotFoundError)
 def test_transfer_list(generate_files):
     """
     Тестирует функцию transfer_list().
     :return: list
     :return: list
     """
-    listing_files = func.get_filepath('.')
+    listing_files = func.get_filepath(TEST_DIR)
     transfer_list_files, transfer_not_found = func.get_transfer_list(listing_files, test_user_list)
     assert transfer_list_files == test_transfer_list_files
     assert transfer_not_found == test_transfer_not_found
 
 
-@pytest.mark.xfail(raises=FileNotFoundError)
+def test_name_comparer_if_matches():
+    """
+    Тестирует функцию name_comparer().
+    :return: bool
+    """
+    assert func.name_comparer(test_searching_name_true, test_file_name) == True
+
+
+def test_name_comparer_if_not_matches():
+    """
+    Тестирует функцию name_comparer().
+    :return: bool
+    """
+    assert func.name_comparer(test_searching_name_false, test_file_name) == False
+
+
+
+# @pytest.mark.xfail(raises=FileNotFoundError)
 def test_copy_files(generate_files):
     """
     Тестирует функцию copy_files().
     :return: int
     """
-    counter = func.copy_files(test_transfer_list_files, '.', './selected')
+    counter = func.copy_files(test_transfer_list_files, TEST_DIR, NEW_DIR_NAME)
     assert counter == test_counter
+    os.chdir(os.path.join(TEST_DIR, NEW_DIR_NAME))
     for name in test_transfer_list_files:
         assert os.path.isfile(name)
-        shutil.rmtree('./selected')
-        os.mkdir('./selected')
 
 
 def test_make_report():
