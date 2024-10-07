@@ -112,7 +112,10 @@ def name_comparer(searching_name: str, file_name: str):
     :return:
     """
     part_name, _ = file_name.split('.')
+
     for i in range(len(searching_name))[::-1]:
+        if len(searching_name) > len(part_name):
+            return False
         if searching_name[i].lower() != part_name[i].lower():
             return False
     return True
