@@ -3,8 +3,8 @@ from src import func
 if __name__ == '__main__':
     print(func.welcome())
     directory = func.get_directory()
-    user_list = func.get_string()
-    func.parser_list(user_list)
+    user_string = func.get_string()
+    user_list = func.parser_list(user_string)
     func.make_directory(directory)
     filepath_list = func.get_filepath(directory)
     unique_list = func.get_unique_list(user_list)
